@@ -2,6 +2,8 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import {validationResult} from 'express-validator';
+import bcrypt from 'bcrypt';
+import cors from 'cors';
 
 import {registerValidation} from './validations/auth.js'
 
@@ -15,7 +17,7 @@ mongoose
 const app = express();
 
 app.use(express.json());
-
+app.use(cors());
 app.post('/auth/login', async (req, res) => {
     try {
         const user = await UserModel.findOne({email: req.body.email});
@@ -26,7 +28,7 @@ app.post('/auth/login', async (req, res) => {
             });
         }
 
-        const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash);
+        const isValidPass = await bcrypt.compare(String(req.body.password), user._doc.passwordHash);
 
         if (!isValidPass) {
             return res.status(400).json({
@@ -60,13 +62,13 @@ app.post('/auth/register', registerValidation, async (req, res) => {
             return res.status(400).json(errors.array());
         }
 
-        const password = req.body.password;
+        const password = String(req.body.password);
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
         const doc = new UserModel({
             email: req.body.email,
-            fullname: req.body.fullname,
+            fullName: req.body.fullName,
             avatarUrl: req.body.avatarUrl,
             passwordHash: hash,
         });
