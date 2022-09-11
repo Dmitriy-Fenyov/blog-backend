@@ -67,9 +67,7 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         const hash = await bcrypt.hash(password, salt);
 
         const doc = new UserModel({
-            email: req.body.email,
-            fullName: req.body.fullName,
-            avatarUrl: req.body.avatarUrl,
+            login: req.body.login,
             passwordHash: hash,
         });
 
@@ -88,6 +86,7 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         res.json({...userData, token,});
     }   catch (error) {
         res.status(500).json({
+            error,
             message: 'Не удалось зарегестрироваться',
         });
     }
