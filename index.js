@@ -60,6 +60,7 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()) {
             return res.status(400).json(errors.array());
+
         }
 
         const password = String(req.body.password);
@@ -67,7 +68,7 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         const hash = await bcrypt.hash(password, salt);
 
         const doc = new UserModel({
-            login: req.body.login,
+            email: req.body.login,
             passwordHash: hash,
         });
 
