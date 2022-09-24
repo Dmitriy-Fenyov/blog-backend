@@ -20,9 +20,10 @@ app.use(express.json());
 app.use(cors());
 app.post('/auth/login', async (req, res) => {
     try {
-        const user = await UserModel.findOne({email: req.body.email});
+        const user = await UserModel.findOne({email: req.body.login});
 
         if (!user) {
+            console.log('1')
             return res.status(404).json({
                 message: 'Пользователь не найден',
             });
